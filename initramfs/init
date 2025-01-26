@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Mount essential virtual filesystems
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+
+# Optional: Create writable areas in memory
+mount -t tmpfs tmpfs /var
+mount -t tmpfs tmpfs /tmp
+
+mkdir -p /work
+mount -t 9p -o trans=virtio host9p /work
+
+modprobe sr_mod
+modprobe cdrom
+
+mount -t iso9660 /dev/sr0 /media/cdrom
+
+# Start the default init system in the initramfs
+exec /sbin/init
